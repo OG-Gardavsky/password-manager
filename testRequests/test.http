@@ -1,3 +1,11 @@
 @host=http://localhost:3000
 
-GET {{host}}/passRecord
+POST {{host}}/passRecord
+Content-Type: application/json
+
+{
+    "name": "google",
+    "userName": "johnDoe",
+    "password": "ultraStrongPass",
+    "loginLink": "google.com"
+}

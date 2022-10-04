@@ -1,6 +1,6 @@
 import { Schema, model } from 'mongoose';
 
-interface IPassRecord {
+export interface IPassRecord {
     name: string;
     userName: string;
     password: string;
