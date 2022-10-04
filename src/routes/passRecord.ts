@@ -4,14 +4,14 @@ import { HydratedDocument } from 'mongoose';
 
 const router: Router = Router();
 
+//TODO fill user from auth token
+const user: string = 'John doe';
+
 router.post('/', async (req: Request, res: Response) => {
 
     const passRecord: HydratedDocument<IPassRecord>  = new PassRecord({
         ...req.body
     })
-
-    //TODO fill user from auth token
-    const user: string = 'John doe';
 
     try {
         await passRecord.validate();
@@ -34,7 +34,28 @@ router.post('/', async (req: Request, res: Response) => {
 });
 
 router.get('/', async (req: Request, res: Response) => {
+    try {
 
+        const passRecords: HydratedDocument<IPassRecord>[] = await PassRecord.find();
+        res.send(passRecords);
+
+    } catch (err) {
+        console.error(err);
+        return res.status(500).send({error: 'Unexpected server error'});
+    }
+});
+
+router.get('/:id', async (req: Request, res: Response) => {
+    try {
+
+        const passRecord: HydratedDocument<IPassRecord> | null = await PassRecord.findOne({_id: req.params.id});
+        const resPassRecord = !passRecord ? [] : passRecord;
+        res.send(resPassRecord);
+
+    } catch (err) {
+        console.error(err);
+        return res.status(500).send({error: 'Unexpected server error'});
+    }
 });
 
 router.put('/', async (req: Request, res: Response) => {
