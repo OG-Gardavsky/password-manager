@@ -1,11 +1,14 @@
 import express, { Express } from 'express';
-import dotenv from 'dotenv';
 import { passRecordRouter } from './routes';
+import { dbConnect } from './db/mongoose';
 
-dotenv.config();
+dbConnect();
 
 const app: Express = express();
 const port = process.env.PORT;
+
+app.disable('x-powered-by');
+app.use(express.json());
 
 app.use('/passRecord', passRecordRouter);
 
