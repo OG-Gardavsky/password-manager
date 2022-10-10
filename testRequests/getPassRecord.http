@@ -1,4 +1,4 @@
 @host=http://localhost:3000
 
-GET {{host}}/passRecord/633ca41a19585a06e090c417
+GET {{host}}/passRecord/4545
 Content-Type: application/json
