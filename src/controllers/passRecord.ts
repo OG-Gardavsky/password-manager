@@ -50,6 +50,7 @@ export const getPassRecordById: RequestHandler = async (req, res, next) => {
             return res.status(404).send();
         }
         res.send(passRecord);
+        logUserAction(user, userActionsEnum.GET, passRecord.name)
         next();
     } catch (err) {
         logError(err)

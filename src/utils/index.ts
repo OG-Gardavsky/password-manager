@@ -8,7 +8,7 @@ export enum userActionsEnum {
 
 export const logUserAction = (userIdentification: string, userAction: userActionsEnum, passIdentification: string) :void => {
     const date: Date = new Date();
-    console.log(`[${date}] - User: '${userIdentification}' ${userAction} password '${passIdentification}'`);
+    console.log(`[${date.toISOString()}] - User: '${userIdentification}' ${userAction} password '${passIdentification}'`);
 }
 
 export const logError = (error: any) :void => {

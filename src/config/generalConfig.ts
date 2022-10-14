@@ -4,5 +4,6 @@ dotenv.config();
 
 export const generalConfig = {
     mongoDbAddress: process.env.MONGO_DB_ADDRESS,
+    serverPort: process.env.PORT,
 
 }
