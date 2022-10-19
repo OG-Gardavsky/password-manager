@@ -76,22 +76,36 @@ export const updatePassRecord: RequestHandler = async (req, res, next) => {
         return res.status(400).send({ error: 'Invalid body of request, in request should be only fields ' + allowedUpdates.toString()});
     }
 
-    const passRecord = await findRecordById(req, res);
-    if (!passRecord) {
-        return res.status(404).send();
-    }
-
     try {
+        const passRecord = await findRecordById(req, res);
+        if (!passRecord) {
+            return res.status(404).send();
+        }
+
         receivedKeys.forEach((key) => passRecord[key] = req.body[key])
         await passRecord.save();
         logUserAction(user, userActionsEnum.PUT, passRecord.name);
 
         res.send(passRecord);
     } catch (err) {
+        logError(err);
         return res.status(500).send({error: 'Unexpected server error'});
     }
 }
 
 export const deletePassRecord: RequestHandler = async (req, res, next) => {
+   try {
+       const passRecord = await findRecordById(req, res);
+       if (!passRecord) {
+           return res.status(404).send();
+       }
 
+       await passRecord.remove();
+       logUserAction(user, userActionsEnum.DELETE, passRecord.name);
+       res.send();
+
+   } catch (err) {
+       logError(err);
+       return res.status(500).send({error: 'Unexpected server error'});
+   }
 }
