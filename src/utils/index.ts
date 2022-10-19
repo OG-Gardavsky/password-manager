@@ -15,3 +15,7 @@ export const logError = (error: any) :void => {
     const date: Date = new Date();
     console.log(`[${date}] - Error: \n ${error}`);
 }
+
+export const getUserIdFromSession = (req: any): number => {
+    return  req.session.passport.user.id;
+}

@@ -4,7 +4,7 @@ export interface IPassRecord {
     name: string;
     userName: string;
     password: string;
-    userId: number;
+    owner: number;
     loginLink?: string;
 }
 
@@ -12,7 +12,7 @@ const passRecordSchema = new Schema<IPassRecord>({
     name: { type: String, required: true },
     userName: { type: String, required: true },
     password: { type: String, required: true },
-    userId: { type: Number, required: true },
+    owner: { type: Number, required: true },
     loginLink: { type: String, required: false },
 });
 
