@@ -1,7 +1,8 @@
-@host=http://localhost:3000
+@host=http://localhost:4000
 
 POST {{host}}/passRecord
 Content-Type: application/json
+Cookie: connect.sid=s:8CDbDkl2yanUZFe41gwSCQLrbfx_gFio.yPx52Qgxs5385+SDgfgEXVx/G+rE+wW5y2LK6BRn8YY
 
 {
     "name": "google",

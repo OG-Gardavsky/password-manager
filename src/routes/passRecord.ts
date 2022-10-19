@@ -7,19 +7,20 @@ import {
     updatePassRecord
 } from "../controllers/passRecord";
 import {validateParamId} from "../middlewares/validateParams";
+import { checkAuthenticated } from '../middlewares/auth';
 
 const router: Router = Router();
 
 
-router.post('/', createPassRecord);
+router.post('/', checkAuthenticated, createPassRecord);
 
-router.get('/', getPassRecords);
+router.get('/', checkAuthenticated, getPassRecords);
 
-router.get('/:id', validateParamId, getPassRecordById);
+router.get('/:id', checkAuthenticated, validateParamId, getPassRecordById);
 
-router.put('/:id', validateParamId, updatePassRecord);
+router.put('/:id', checkAuthenticated, validateParamId, updatePassRecord);
 
-router.delete('/:id', validateParamId, deletePassRecord);
+router.delete('/:id', checkAuthenticated, validateParamId, deletePassRecord);
 
 
 export { router };
