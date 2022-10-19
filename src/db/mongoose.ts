@@ -1,12 +1,12 @@
 import { connect } from 'mongoose';
-import { generalConfig } from '../config/generalConfig';
+import { mongoDbAddress } from '../config/generalConfig';
 
 
 export const dbConnect = async () => {
     try {
-        await connect(String(generalConfig.mongoDbAddress))
-        console.log(`connected to db: '${generalConfig.mongoDbAddress}'`);
+        await connect(String(mongoDbAddress))
+        console.log(`connected to db: '${mongoDbAddress}'`);
     } catch (err) {
-        console.error(generalConfig.mongoDbAddress, err);
+        console.error(mongoDbAddress, err);
     }
 }
