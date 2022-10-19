@@ -5,6 +5,14 @@ import {getUserIdFromSession, logError, logUserAction, userActionsEnum} from "..
 
 const user: string = 'John doe';
 
+const findRecordById: Function = async (req: any,res: any): Promise<HydratedDocument<IPassRecord> | null>  => {
+    const passRecord: HydratedDocument<IPassRecord> | null = await PassRecord.findOne({
+        _id: req.params.id,
+        owner: getUserIdFromSession(req),
+    });
+    return passRecord;
+}
+
 export const createPassRecord: RequestHandler = async (req, res, next) => {
     const passRecord: HydratedDocument<IPassRecord>  = new PassRecord({
         ...req.body,
@@ -45,15 +53,13 @@ export const getPassRecords: RequestHandler = async (req, res, next) => {
 
 export const getPassRecordById: RequestHandler = async (req, res, next) => {
     try {
-        const passRecord: HydratedDocument<IPassRecord> | null = await PassRecord.findOne({
-            _id: req.params.id,
-            owner: getUserIdFromSession(req),
-        });
+        const passRecord = await findRecordById(req, res);
         if (!passRecord) {
             return res.status(404).send();
         }
+
         res.send(passRecord);
-        logUserAction(user, userActionsEnum.GET, passRecord.name)
+        logUserAction(user, userActionsEnum.GET, passRecord.name);
         next();
     } catch (err) {
         logError(err);
@@ -63,10 +69,27 @@ export const getPassRecordById: RequestHandler = async (req, res, next) => {
 
 export const updatePassRecord: RequestHandler = async (req, res, next) => {
     const allowedUpdates =  ['name', 'userName', 'password', 'loginLink'];
+    const receivedKeys = Object.keys(req.body);
 
-    Object.keys(req.body)
+    const isOperationValid = receivedKeys.every((key) => allowedUpdates.includes(key));
+    if (!isOperationValid) {
+        return res.status(400).send({ error: 'Invalid body of request, in request should be only fields ' + allowedUpdates.toString()});
+    }
 
+    const passRecord = await findRecordById(req, res);
+    if (!passRecord) {
+        return res.status(404).send();
+    }
 
+    try {
+        receivedKeys.forEach((key) => passRecord[key] = req.body[key])
+        await passRecord.save();
+        logUserAction(user, userActionsEnum.PUT, passRecord.name);
+
+        res.send(passRecord);
+    } catch (err) {
+        return res.status(500).send({error: 'Unexpected server error'});
+    }
 }
 
 export const deletePassRecord: RequestHandler = async (req, res, next) => {
