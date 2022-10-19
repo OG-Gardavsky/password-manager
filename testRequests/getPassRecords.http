@@ -1,5 +1,25 @@
 @host=http://localhost:4000
 
-GET {{host}}/passRecord
-Content-Type: application/json
-Cookie: connect.sid=s%3AaPExGCTEKu7AMUCtbq8GJs7TQQ4GWx4Q.mmKmrtfQ8BthDHdu1IY8NBI4nYv3r5nRBbUqjR9tGFc
+# GET {{host}}/passRecord
+# Content-Type: application/json 
+# Cookie: connect.sid=s%3AZD6rbWj8zr6v3L7dLPvoa-mk2jz-AleS.zSRLDeOry5lJ5wmNpH6cyvzYTF8kdT9aw4Mp8fFVaEA
+
+GET {{host}}/passRecord HTTP/1.1
+Accept: text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.9
+Accept-Encoding: gzip, deflate, br
+Accept-Language: cs,en-US;q=0.9,en;q=0.8,cs-CZ;q=0.7
+Cache-Control: max-age=0
+Connection: keep-alive
+Cookie: connect.sid=s%3AZD6rbWj8zr6v3L7dLPvoa-mk2jz-AleS.zSRLDeOry5lJ5wmNpH6cyvzYTF8kdT9aw4Mp8fFVaEA
+Host: localhost:4000
+If-None-Match: W/"10e-PJP6ahr2ghOLXFKpYKCaVLpX0/E"
+Referer: http://localhost:4000/
+Sec-Fetch-Dest: document
+Sec-Fetch-Mode: navigate
+Sec-Fetch-Site: same-origin
+Sec-Fetch-User: ?1
+Upgrade-Insecure-Requests: 1
+User-Agent: Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/106.0.0.0 Safari/537.36
+sec-ch-ua: "Chromium";v="106", "Google Chrome";v="106", "Not;A=Brand";v="99"
+sec-ch-ua-mobile: ?0
+sec-ch-ua-platform: "macOS"

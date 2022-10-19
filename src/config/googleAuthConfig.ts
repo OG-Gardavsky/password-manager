@@ -1,6 +1,6 @@
 import passport from 'passport';
 import { Strategy as GoogleStrategy } from 'passport-google-oauth2';
-import { googleAuthclientID, googleAuthclientSecret, port } from '../config/generalConfig';
+import { googleAuthclientID, googleAuthclientSecret, port } from './generalConfig';
 
 
 const authUser = (request: any, accessToken: any, refreshToken: any, profile: any, done: any) => {
@@ -17,8 +17,8 @@ export const usePassport = () => {
           passReqToCallback: true
      }, authUser));
      
-     passport.serializeUser( (user, done) => {
-          const doneres = done(null, user);
+     passport.serializeUser((user, done) => {
+          done(null, user);
      });
       
      passport.deserializeUser((user: any, done) => {

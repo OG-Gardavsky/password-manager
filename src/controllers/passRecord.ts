@@ -6,10 +6,13 @@ import {logError, logUserAction, userActionsEnum} from "../utils";
 const user: string = 'John doe';
 
 export const createPassRecord: RequestHandler = async (req, res, next) => {
-
+    console.log(req.body)
     const passRecord: HydratedDocument<IPassRecord>  = new PassRecord({
         ...req.body
     })
+
+    //@ts-ignore
+    passRecord.userId = req.session.passport.user.id;
 
     try {
         await passRecord.validate();
