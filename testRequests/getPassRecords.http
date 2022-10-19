@@ -2,3 +2,4 @@
 
 GET {{host}}/passRecord
 Content-Type: application/json
+Cookie: connect.sid=s%3AaPExGCTEKu7AMUCtbq8GJs7TQQ4GWx4Q.mmKmrtfQ8BthDHdu1IY8NBI4nYv3r5nRBbUqjR9tGFc

@@ -7,13 +7,14 @@ import {
     updatePassRecord
 } from "../controllers/passRecord";
 import {validateParamId} from "../middlewares/validateParams";
+import { checkAuthenticated } from '../middlewares/auth';
 
 const router: Router = Router();
 
 
 router.post('/', createPassRecord);
 
-router.get('/', getPassRecords);
+router.get('/', checkAuthenticated, getPassRecords);
 
 router.get('/:id', validateParamId, getPassRecordById);
 

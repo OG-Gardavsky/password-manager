@@ -26,10 +26,6 @@ usePassport()
 app.use('/passRecord', passRecordRouter);
 app.use('/auth', googleAuthROuter);
 
-app.use('*', (req, res) => {
-  res.redirect("/auth/login")
-})
-
 app.listen(port, () => {
   console.log(`⚡️ Server is running at port: ${port}`);
 });

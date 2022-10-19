@@ -18,10 +18,10 @@ export const usePassport = () => {
      }, authUser));
      
      passport.serializeUser( (user, done) => {
-          done(null, user)
+          const doneres = done(null, user);
      });
       
      passport.deserializeUser((user: any, done) => {
-          done (null, user)
+          done (null, user);
      });
 }
