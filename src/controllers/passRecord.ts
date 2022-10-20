@@ -69,28 +69,36 @@ export const getPassRecordById: RequestHandler = async (req, res, next) => {
 
 export const searchPassRecord: RequestHandler = async (req, res, next) => {
 
-    // partial without diacritics
-    const searchedResult = req.params.searched.toLowerCase();
-    const rgx = (pattern: string) => new RegExp(`.*${pattern}.*`);
-    const searchRgx = rgx(searchedResult);
+    const searched = req.params.searched.toLowerCase();
+    const resultsDiacritics = await PassRecord.find( { $text: { $search: searched } } );
 
-    const results = await PassRecord.aggregate([
-        // todo id  z requestu
+    const searchRgx = new RegExp(`.*${searched}.*`);
+    const resultsPartial = await PassRecord.aggregate([
         { $match: {
             $or: [
                 { userName: { $regex: searchRgx, $options: "i" } },
                 { name: { $regex: searchRgx, $options: "i" } },
             ],
         }},
-    ])
-    res.status(200).send(results)
+    ]);
 
+    const results = resultsDiacritics.concat(resultsPartial);
 
-    // // diacritics search
-    // const searchedResult = req.params.searched.toLowerCase();
-    // const results = await PassRecord.find( { $text: { $search: searchedResult } } );
-    //
-    // res.status(200).send(results);
+    // const ids = results.map(result => result._id.toString());
+    // const uniqueIds = [...new Set(ids)];
+    // const resultsToSend = uniqueIds.map(id => results.find(result => result._id.toString() === id))
+
+    const uniqueRecordsObject: {} = {};
+    results.forEach(result => {
+        const id = result._id.toString();
+        // @ts-ignore
+        uniqueRecordsObject[id] = result;
+    });
+    const uniqueRecordIds = Object.keys(uniqueRecordsObject)
+    // @ts-ignore
+    const resultsToSend: [] = uniqueRecordIds.map(recordId => uniqueRecordsObject[recordId]);
+
+    res.status(200).send(resultsToSend);
 }
 
 export const updatePassRecord: RequestHandler = async (req, res, next) => {
