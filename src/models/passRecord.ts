@@ -16,6 +16,11 @@ const passRecordSchema = new Schema<IPassRecord>({
     loginLink: { type: String, required: false },
 });
 
-passRecordSchema.index({ name: "text" })
+passRecordSchema.index({ "name" : 1 },
+{   collation: {
+            locale : 'cs',
+            strength : 2
+        }
+})
 
 export const PassRecord = model<IPassRecord>('PassRecord', passRecordSchema);

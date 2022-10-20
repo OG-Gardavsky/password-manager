@@ -68,36 +68,33 @@ export const getPassRecordById: RequestHandler = async (req, res, next) => {
 }
 
 export const searchPassRecord: RequestHandler = async (req, res, next) => {
-    // const searchedResult = req.params.searched.toLowerCase();
-    //
-    // console.log(searchedResult)
-    //
-    // const results = await PassRecord.find(
-    //     {
-    //         $text: { $search: searchedResult, $caseSensitive: false }
-    //     })
-    //
-    // res.send(results)
 
-
+    // bez funkcni diakritiky
     const searchedResult = req.params.searched.toLowerCase();
     const rgx = (pattern: string) => new RegExp(`.*${pattern}.*`);
     const searchRgx = rgx(searchedResult);
 
-    const peers = await PassRecord.find({
-        $or: [
-            { name: { $regex: searchRgx, $options: "i" } },
-            // { email: { $regex: searchRgx, $options: "i" } },
-        ],
-    })
+    const results = await PassRecord.aggregate([
+        // todo id  z requestu
+        { $match: {
+            $or: [
+                { userName: { $regex: searchRgx, $options: "i" } },
+                { name: { $regex: searchRgx, $options: "i" } },
+            ],
+        }}
 
-    // const results = await PassRecord.find(
-    //     {
-    //         $text: { $search: searchedResult, $caseSensitive: false }
-    //     })
-    //     .limit(2)
+    ])
+    res.status(200).send(results)
 
-    res.status(200).send(peers)
+
+
+
+    // const searchedResult = req.params.searched.toLowerCase();
+    // const rgx = (pattern: string) => new RegExp(`.*${pattern}.*`);
+    // const searchRgx = rgx(searchedResult);
+    //
+    // const results = await PassRecord.find({name: searchedResult}).collation({ locale: "cs", strength: 1 });
+    // res.status(200).send(results);
 }
 
 export const updatePassRecord: RequestHandler = async (req, res, next) => {
