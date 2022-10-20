@@ -69,7 +69,7 @@ export const getPassRecordById: RequestHandler = async (req, res, next) => {
 
 export const searchPassRecord: RequestHandler = async (req, res, next) => {
 
-    // bez funkcni diakritiky
+    // partial without diacritics
     const searchedResult = req.params.searched.toLowerCase();
     const rgx = (pattern: string) => new RegExp(`.*${pattern}.*`);
     const searchRgx = rgx(searchedResult);
@@ -81,19 +81,15 @@ export const searchPassRecord: RequestHandler = async (req, res, next) => {
                 { userName: { $regex: searchRgx, $options: "i" } },
                 { name: { $regex: searchRgx, $options: "i" } },
             ],
-        }}
-
+        }},
     ])
     res.status(200).send(results)
 
 
-
-
+    // // diacritics search
     // const searchedResult = req.params.searched.toLowerCase();
-    // const rgx = (pattern: string) => new RegExp(`.*${pattern}.*`);
-    // const searchRgx = rgx(searchedResult);
+    // const results = await PassRecord.find( { $text: { $search: searchedResult } } );
     //
-    // const results = await PassRecord.find({name: searchedResult}).collation({ locale: "cs", strength: 1 });
     // res.status(200).send(results);
 }
 

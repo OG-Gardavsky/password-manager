@@ -3,7 +3,7 @@ import {
     createPassRecord,
     deletePassRecord,
     getPassRecordById,
-    getPassRecords,
+    getPassRecords, searchPassRecord,
     updatePassRecord
 } from "../controllers/passRecord";
 import {validateNotEmptyBody, validateParamId} from "../middlewares/validateRequests";
@@ -16,11 +16,14 @@ router.post('/', checkAuthenticated, validateNotEmptyBody,createPassRecord);
 
 router.get('/', checkAuthenticated, getPassRecords);
 
-router.get('/:id', checkAuthenticated, validateParamId, getPassRecordById);
+router.get('/id::id', checkAuthenticated, validateParamId, getPassRecordById);
 
-router.put('/:id', checkAuthenticated, validateNotEmptyBody, validateParamId, updatePassRecord);
+// router.get('/searched::searched', checkAuthenticated, searchPassRecord);
+router.get('/searched::searched', searchPassRecord);
 
-router.delete('/:id', checkAuthenticated, validateParamId, deletePassRecord);
+router.put('/id::id', checkAuthenticated, validateNotEmptyBody, validateParamId, updatePassRecord);
+
+router.delete('/id::id', checkAuthenticated, validateParamId, deletePassRecord);
 
 
 export { router };
