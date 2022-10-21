@@ -16,6 +16,6 @@ export const logError = (error: any) :void => {
     console.log(`[${date}] - Error: \n ${error}`);
 }
 
-export const getOwnerFromSession = (req: any): number => {
+export const getOwnerFromSession = (req: any): string => {
     return  req.session.passport.user.email;
 }

@@ -3,7 +3,7 @@ import {HydratedDocument} from "mongoose";
 import {IPassRecord, PassRecord} from "../models/passRecord";
 import {getOwnerFromSession, logError, logUserAction, userActionsEnum} from "../utils";
 
-const user: string = 'John doe';
+
 
 const findRecordById: Function = async (req: any,res: any): Promise<HydratedDocument<IPassRecord> | null>  => {
     const passRecord: HydratedDocument<IPassRecord> | null = await PassRecord.findOne({
@@ -14,21 +14,30 @@ const findRecordById: Function = async (req: any,res: any): Promise<HydratedDocu
 }
 
 export const createPassRecord: RequestHandler = async (req, res, next) => {
+
+    let userIdentification: string;
+    try {
+        userIdentification = getOwnerFromSession(req);
+    } catch (err) {
+        logError(err);
+        return res.status(500).send({error: 'Unexpected server error'});
+    }
+
     const passRecord: HydratedDocument<IPassRecord>  = new PassRecord({
         ...req.body,
-        owner: getOwnerFromSession(req)
+        owner: userIdentification
     })
 
     try {
         await passRecord.validate();
     } catch (err) {
-        logError(`PassRecord for user ${user} was not save due to validation errors`)
+        logError(`PassRecord for user ${userIdentification} was not save due to validation errors`)
         return res.status(400).send(err);
     }
 
     try {
         await passRecord.save();
-        logUserAction(user, userActionsEnum.POST, passRecord.name);
+        logUserAction(userIdentification, userActionsEnum.POST, passRecord.name);
 
         res.send(passRecord);
     } catch (err) {
@@ -39,10 +48,12 @@ export const createPassRecord: RequestHandler = async (req, res, next) => {
 
 export const getPassRecords: RequestHandler = async (req, res, next) => {
     try {
+        const userIdentification: string =  getOwnerFromSession(req);
+
         const passRecords: HydratedDocument<IPassRecord>[] = await PassRecord.find({
             owner: getOwnerFromSession(req),
         });
-        logUserAction(user, userActionsEnum.GET, 'all his/her passwords');
+        logUserAction(userIdentification, userActionsEnum.GET, 'all his/her passwords');
         res.send(passRecords);
     } catch (err) {
         logError(err)
@@ -52,13 +63,15 @@ export const getPassRecords: RequestHandler = async (req, res, next) => {
 
 export const getPassRecordById: RequestHandler = async (req, res, next) => {
     try {
+        const userIdentification: string =  getOwnerFromSession(req);
+
         const passRecord = await findRecordById(req, res);
         if (!passRecord) {
             return res.status(404).send();
         }
 
         res.send(passRecord);
-        logUserAction(user, userActionsEnum.GET, passRecord.name);
+        logUserAction(userIdentification, userActionsEnum.GET, passRecord.name);
     } catch (err) {
         logError(err);
         return res.status(500).send({error: 'Unexpected server error'});
@@ -72,6 +85,8 @@ export const searchPassRecord: RequestHandler = async (req, res, next) => {
     }
 
     try {
+        const userIdentification: string =  getOwnerFromSession(req);
+
         const searched = req.params.searched.toLowerCase();
         const resultsDiacritics = await PassRecord.find(
             { owner: getOwnerFromSession(req), $text: { $search: searched } }
@@ -104,7 +119,7 @@ export const searchPassRecord: RequestHandler = async (req, res, next) => {
         // @ts-ignore
         const resultsToSend: [] = uniqueRecordIds.map(recordId => uniqueRecordsObject[recordId]);
 
-        logUserAction(user, userActionsEnum.GET, `passwords with key ${searched}`);
+        logUserAction(userIdentification, userActionsEnum.GET, `passwords with key ${searched}`);
         res.status(200).send(resultsToSend);
 
     } catch (err) {
@@ -123,6 +138,8 @@ export const updatePassRecord: RequestHandler = async (req, res, next) => {
     }
 
     try {
+        const userIdentification: string =  getOwnerFromSession(req);
+
         const passRecord = await findRecordById(req, res);
         if (!passRecord) {
             return res.status(404).send();
@@ -130,7 +147,7 @@ export const updatePassRecord: RequestHandler = async (req, res, next) => {
 
         receivedKeys.forEach((key) => passRecord[key] = req.body[key])
         await passRecord.save();
-        logUserAction(user, userActionsEnum.PUT, passRecord.name);
+        logUserAction(userIdentification, userActionsEnum.PUT, passRecord.name);
 
         res.send(passRecord);
     } catch (err) {
@@ -146,8 +163,10 @@ export const deletePassRecord: RequestHandler = async (req, res, next) => {
            return res.status(404).send();
        }
 
+       const userIdentification: string =  getOwnerFromSession(req);
+
        await passRecord.remove();
-       logUserAction(user, userActionsEnum.DELETE, passRecord.name);
+       logUserAction(userIdentification, userActionsEnum.DELETE, passRecord.name);
        res.send();
 
    } catch (err) {
