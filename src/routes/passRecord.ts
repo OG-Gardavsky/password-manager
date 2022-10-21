@@ -18,8 +18,7 @@ router.get('/', checkAuthenticated, getPassRecords);
 
 router.get('/id::id', checkAuthenticated, validateParamId, getPassRecordById);
 
-// router.get('/searched::searched', checkAuthenticated, searchPassRecord);
-router.get('/searched::searched', searchPassRecord);
+router.get('/searched::searched', checkAuthenticated, searchPassRecord);
 
 router.put('/id::id', checkAuthenticated, validateNotEmptyBody, validateParamId, updatePassRecord);
 

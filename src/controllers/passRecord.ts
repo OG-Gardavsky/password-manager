@@ -1,14 +1,14 @@
 import { RequestHandler} from "express";
 import {HydratedDocument} from "mongoose";
 import {IPassRecord, PassRecord} from "../models/passRecord";
-import {getUserIdFromSession, logError, logUserAction, userActionsEnum} from "../utils";
+import {getOwnerFromSession, logError, logUserAction, userActionsEnum} from "../utils";
 
 const user: string = 'John doe';
 
 const findRecordById: Function = async (req: any,res: any): Promise<HydratedDocument<IPassRecord> | null>  => {
     const passRecord: HydratedDocument<IPassRecord> | null = await PassRecord.findOne({
         _id: req.params.id,
-        owner: getUserIdFromSession(req),
+        owner: getOwnerFromSession(req),
     });
     return passRecord;
 }
@@ -16,7 +16,7 @@ const findRecordById: Function = async (req: any,res: any): Promise<HydratedDocu
 export const createPassRecord: RequestHandler = async (req, res, next) => {
     const passRecord: HydratedDocument<IPassRecord>  = new PassRecord({
         ...req.body,
-        owner: getUserIdFromSession(req)
+        owner: getOwnerFromSession(req)
     })
 
     try {
@@ -31,7 +31,6 @@ export const createPassRecord: RequestHandler = async (req, res, next) => {
         logUserAction(user, userActionsEnum.POST, passRecord.name);
 
         res.send(passRecord);
-        next();
     } catch (err) {
         logError(err);
         return res.status(500).send({error: 'Unexpected server error'});
@@ -41,10 +40,10 @@ export const createPassRecord: RequestHandler = async (req, res, next) => {
 export const getPassRecords: RequestHandler = async (req, res, next) => {
     try {
         const passRecords: HydratedDocument<IPassRecord>[] = await PassRecord.find({
-            owner: getUserIdFromSession(req),
+            owner: getOwnerFromSession(req),
         });
+        logUserAction(user, userActionsEnum.GET, 'all his/her passwords');
         res.send(passRecords);
-        next();
     } catch (err) {
         logError(err)
         return res.status(500).send({error: 'Unexpected server error'});
@@ -60,7 +59,6 @@ export const getPassRecordById: RequestHandler = async (req, res, next) => {
 
         res.send(passRecord);
         logUserAction(user, userActionsEnum.GET, passRecord.name);
-        next();
     } catch (err) {
         logError(err);
         return res.status(500).send({error: 'Unexpected server error'});
@@ -69,36 +67,50 @@ export const getPassRecordById: RequestHandler = async (req, res, next) => {
 
 export const searchPassRecord: RequestHandler = async (req, res, next) => {
 
-    const searched = req.params.searched.toLowerCase();
-    const resultsDiacritics = await PassRecord.find( { $text: { $search: searched } } );
+    if (!req.params.searched) {
+        return res.status(400).send({error: 'Missing parameter "searched" '});
+    }
 
-    const searchRgx = new RegExp(`.*${searched}.*`);
-    const resultsPartial = await PassRecord.aggregate([
-        { $match: {
-            $or: [
-                { userName: { $regex: searchRgx, $options: "i" } },
-                { name: { $regex: searchRgx, $options: "i" } },
-            ],
-        }},
-    ]);
+    try {
+        const searched = req.params.searched.toLowerCase();
+        const resultsDiacritics = await PassRecord.find(
+            { owner: getOwnerFromSession(req), $text: { $search: searched } }
+        );
 
-    const results = resultsDiacritics.concat(resultsPartial);
+        const searchRgx = new RegExp(`.*${searched}.*`);
+        const resultsPartial = await PassRecord.aggregate([
+            { $match: { owner: getOwnerFromSession(req) } },
+            { $match: {
+                    $or: [
+                        { userName: { $regex: searchRgx, $options: "i" } },
+                        { name: { $regex: searchRgx, $options: "i" } },
+                    ],
+                }},
+        ]);
 
-    // const ids = results.map(result => result._id.toString());
-    // const uniqueIds = [...new Set(ids)];
-    // const resultsToSend = uniqueIds.map(id => results.find(result => result._id.toString() === id))
+        const results = resultsDiacritics.concat(resultsPartial);
 
-    const uniqueRecordsObject: {} = {};
-    results.forEach(result => {
-        const id = result._id.toString();
+        // const ids = results.map(result => result._id.toString());
+        // const uniqueIds = [...new Set(ids)];
+        // const resultsToSend = uniqueIds.map(id => results.find(result => result._id.toString() === id))
+
+        const uniqueRecordsObject: {} = {};
+        results.forEach(result => {
+            const id = result._id.toString();
+            // @ts-ignore
+            uniqueRecordsObject[id] = result;
+        });
+        const uniqueRecordIds = Object.keys(uniqueRecordsObject)
         // @ts-ignore
-        uniqueRecordsObject[id] = result;
-    });
-    const uniqueRecordIds = Object.keys(uniqueRecordsObject)
-    // @ts-ignore
-    const resultsToSend: [] = uniqueRecordIds.map(recordId => uniqueRecordsObject[recordId]);
+        const resultsToSend: [] = uniqueRecordIds.map(recordId => uniqueRecordsObject[recordId]);
 
-    res.status(200).send(resultsToSend);
+        logUserAction(user, userActionsEnum.GET, `passwords with key ${searched}`);
+        res.status(200).send(resultsToSend);
+
+    } catch (err) {
+        logError(err);
+        return res.status(500).send({error: 'Unexpected server error'});
+    }
 }
 
 export const updatePassRecord: RequestHandler = async (req, res, next) => {
