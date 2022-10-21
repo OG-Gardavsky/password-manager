@@ -1,0 +1,17 @@
+version: '3.9'
+services:
+    database:
+        image: "mongo:latest"
+        ports:
+            - "27000:27017"
+    server:
+        build: .
+        image: "passmangerapp:1"
+        ports:
+            - "4000:4000"
+        restart: on-failure
+        depends_on:
+            - database
+        environment:
+            - PORT=4000
+            - MONGO_DB_ADDRESS=mongodb://database:27017/passwordManager

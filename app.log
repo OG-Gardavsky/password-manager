@@ -1,0 +1,36 @@
+[1] ⚡️ Server is running at port: 4000
+[1] connected to db: 'mongodb://localhost:27017/passwordManager'
+[0] c4:13:25 PM - Starting compilation in watch mode...
+[0] 
+[0] 
+[0] 4:13:28 PM - Found 0 errors. Watching for file changes.
+[1] ⚡️ Server is running at port: 4000
+[1] connected to db: 'mongodb://localhost:27017/passwordManager'
+[1] Error: Failed to lookup view "login.ejs" in views directory "/Users/ondrejgardavsky/code/password-manager/views"
+[1]     at Function.render (/Users/ondrejgardavsky/code/password-manager/node_modules/express/lib/application.js:597:17)
+[1]     at ServerResponse.render (/Users/ondrejgardavsky/code/password-manager/node_modules/express/lib/response.js:1039:7)
+[1]     at /Users/ondrejgardavsky/code/password-manager/dist/routes/googleAuth.js:18:9
+[1]     at Layer.handle [as handle_request] (/Users/ondrejgardavsky/code/password-manager/node_modules/express/lib/router/layer.js:95:5)
+[1]     at next (/Users/ondrejgardavsky/code/password-manager/node_modules/express/lib/router/route.js:144:13)
+[1]     at Route.dispatch (/Users/ondrejgardavsky/code/password-manager/node_modules/express/lib/router/route.js:114:3)
+[1]     at Layer.handle [as handle_request] (/Users/ondrejgardavsky/code/password-manager/node_modules/express/lib/router/layer.js:95:5)
+[1]     at /Users/ondrejgardavsky/code/password-manager/node_modules/express/lib/router/index.js:284:15
+[1]     at Function.process_params (/Users/ondrejgardavsky/code/password-manager/node_modules/express/lib/router/index.js:346:12)
+[1]     at next (/Users/ondrejgardavsky/code/password-manager/node_modules/express/lib/router/index.js:280:10)
+[0] c4:14:51 PM - File change detected. Starting incremental compilation...
+[0] 
+[0] 
+[0] 4:14:51 PM - Found 0 errors. Watching for file changes.
+[1] ⚡️ Server is running at port: 4000
+[1] connected to db: 'mongodb://localhost:27017/passwordManager'
+[0] c4:15:06 PM - File change detected. Starting incremental compilation...
+[0] 
+[0] 
+[0] 4:15:07 PM - Found 0 errors. Watching for file changes.
+[1] ⚡️ Server is running at port: 4000
+[1] connected to db: 'mongodb://localhost:27017/passwordManager'
+[1] [2022-10-21T14:15:18.195Z] - User: 'ogardavsky@gmail.com' viewed password 'all his/her passwords'
+[1] [2022-10-21T14:15:58.803Z] - User: 'ogardavsky@gmail.com' deleted password 'seznám'
+[1] [2022-10-21T14:16:00.289Z] - User: 'ogardavsky@gmail.com' viewed password 'all his/her passwords'
+[1] nodemon -q dist/index.js exited with code 130
+[0] npx tsc --watch exited with code SIGINT
