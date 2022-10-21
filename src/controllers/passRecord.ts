@@ -109,19 +109,16 @@ export const searchPassRecord: RequestHandler = async (req, res, next) => {
         // const uniqueIds = [...new Set(ids)];
         // const resultsToSend = uniqueIds.map(id => results.find(result => result._id.toString() === id))
 
-        const uniqueRecordsObject: {} = {};
+        const uniqueRecordsObject: {[key: string]: Object} = {};
         results.forEach(result => {
             const id = result._id.toString();
-            // @ts-ignore
             uniqueRecordsObject[id] = result;
         });
-        const uniqueRecordIds = Object.keys(uniqueRecordsObject)
-        // @ts-ignore
-        const resultsToSend: [] = uniqueRecordIds.map(recordId => uniqueRecordsObject[recordId]);
+        const uniqueRecordIds: string[] = Object.keys(uniqueRecordsObject)
+        const resultsToSend: Object[] = uniqueRecordIds.map(recordId => uniqueRecordsObject[recordId]);
 
         logUserAction(userIdentification, userActionsEnum.GET, `passwords with key ${searched}`);
         res.status(200).send(resultsToSend);
-
     } catch (err) {
         logError(err);
         return res.status(500).send({error: 'Unexpected server error'});
