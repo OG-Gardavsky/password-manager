@@ -19,7 +19,6 @@ export const validateParamId: RequestHandler = (req, res, next) => {
 }
 
 export const validateNotEmptyBody: RequestHandler = (req, res, next) => {
-    console.log(req.body)
     if (!req.body || Object.keys(req.body).length < 1) {
         return res.status(400).send({error: 'missing body of request'});
     }

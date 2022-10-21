@@ -65,7 +65,7 @@ export const getPassRecordById: RequestHandler = async (req, res, next) => {
     try {
         const userIdentification: string =  getOwnerFromSession(req);
 
-        const passRecord = await findRecordById(req, res);
+        const passRecord: HydratedDocument<IPassRecord> = await findRecordById(req, res);
         if (!passRecord) {
             return res.status(404).send();
         }
@@ -155,7 +155,7 @@ export const updatePassRecord: RequestHandler = async (req, res, next) => {
 
 export const deletePassRecord: RequestHandler = async (req, res, next) => {
    try {
-       const passRecord = await findRecordById(req, res);
+       const passRecord: HydratedDocument<IPassRecord> = await findRecordById(req, res);
        if (!passRecord) {
            return res.status(404).send();
        }
